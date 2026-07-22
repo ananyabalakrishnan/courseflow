@@ -56,45 +56,5 @@
         "building": "Tech Center"
       }
     ]
-  },
-  {
-    "id": "TEST 102",
-    "title": "test",
-    "credits": 3,
-    "color": "sky",
-    "sections": [
-      {
-        "id": "TEST102-2",
-        "professor": "test",
-        "rmp": 4.5,
-        "days": [
-          "M",
-          "W",
-          "F"
-        ],
-        "startTime": "10:00",
-        "endTime": "11:15",
-        "building": "Science Hall"
-      }
-    ]
-  },
-  {
-    "id": "TEST 103",
-    "title": "TEST TEST TEST",
-    "credits": 3,
-    "color": "amber",
-    "sections": [
-      {
-        "id": "TEST103-1",
-        "professor": "test",
-        "rmp": 4.5,
-        "days": [
-          "TH"
-        ],
-        "startTime": "12:00",
-        "endTime": "13:15",
-        "building": "Math Annex"
-      }
-    ]
   }
 ]
