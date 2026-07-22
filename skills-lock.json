@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "auto-updater": {
+      "source": "teylersf/openclaw-auto-updater",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "c26d504acbd98c6f34506b4e68a0e864d066516354b27c06f72e33c9fce65d1e"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
