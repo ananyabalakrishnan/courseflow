@@ -880,26 +880,37 @@
         }
 
         function removeCourse(courseId) {
+            // 1. Remove course from state
             appState.courses = appState.courses.filter(c => c.id !== courseId);
             appState.selectedCourseIds = appState.selectedCourseIds.filter(id => id !== courseId);
             appState.expandedCourseIds = appState.expandedCourseIds.filter(id => id !== courseId);
+    
+            // 2. Refresh UI & recalculated schedules
             renderCourseChecklist();
             solveSchedules();
+
+            // 3. 💾 PERSIST TO BACKEND: Save updated list (without deleted course) to courses.json
+            saveCoursesToBackend();
         }
 
         function removeSection(courseId, sectionId) {
             const course = appState.courses.find(c => c.id === courseId);
             if (course) {
                 course.sections = course.sections.filter(s => s.id !== sectionId);
+        
+                // If no sections remain in this course, delete the course entirely
                 if (course.sections.length === 0) {
                     removeCourse(courseId);
                     return;
                 }
             }
+    
             renderCourseChecklist();
             solveSchedules();
-        }
 
+            // 💾 PERSIST TO BACKEND
+            saveCoursesToBackend();
+        }
         function renderCalendar() {
             const dayColumns = document.querySelectorAll('#calendarColumns [data-day]');
             dayColumns.forEach(col => col.innerHTML = '');
