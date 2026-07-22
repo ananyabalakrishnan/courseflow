@@ -1,0 +1,81 @@
+[
+  {
+    "id": "CS 101",
+    "title": "Intro to Computer Science",
+    "credits": 4,
+    "color": "indigo",
+    "sections": [
+      {
+        "id": "CS101-01",
+        "professor": "Dr. Alan Turing",
+        "rmp": 4.9,
+        "days": [
+          "M",
+          "W",
+          "F"
+        ],
+        "startTime": "09:00",
+        "endTime": "10:15",
+        "building": "Engineering Quad"
+      },
+      {
+        "id": "CS101-02",
+        "professor": "Dr. Grace Hopper",
+        "rmp": 4.7,
+        "days": [
+          "T",
+          "Th"
+        ],
+        "startTime": "10:30",
+        "endTime": "11:45",
+        "building": "Tech Center"
+      },
+      {
+        "id": "CS101-03",
+        "professor": "Prof. John von Neumann",
+        "rmp": 4.2,
+        "days": [
+          "M",
+          "W",
+          "F"
+        ],
+        "startTime": "13:00",
+        "endTime": "14:15",
+        "building": "Engineering Quad"
+      },
+      {
+        "id": "CS101-04",
+        "professor": "Dr. Grace Hopper",
+        "rmp": 4.7,
+        "days": [
+          "M",
+          "W"
+        ],
+        "startTime": "14:30",
+        "endTime": "16:00",
+        "building": "Tech Center"
+      }
+    ]
+  },
+  {
+    "id": "TEST 102",
+    "title": "test",
+    "credits": 3,
+    "color": "sky",
+    "sections": [
+      {
+        "id": "TEST102-2",
+        "professor": "test",
+        "rmp": 4.5,
+        "days": [
+          "M",
+          "W",
+          "F"
+        ],
+        "startTime": "10:00",
+        "endTime": "11:15",
+        "building": "Science Hall"
+      }
+    ]
+  }
+]

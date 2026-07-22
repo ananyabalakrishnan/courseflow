@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en" class="dark h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseFlow | Smart Class & Schedule Optimizer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration for Custom Palette & Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.6); }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(5, minmax(0, 1fr));
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.25s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-900 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex flex-col transition-colors duration-200">
+
+    <!-- Top Navigation Bar -->
+    <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
+        <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-bold text-lg tracking-tight text-slate-900 dark:text-white">CourseFlow</h1>
+                    <span class="text-[10px] font-semibold tracking-wider uppercase bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full">Pro Engine</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Smart Class Schedule Optimizer & Campus Transit Solver</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="hidden md:flex items-center gap-4 text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-lg">
+                <span class="flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-500"></i> <strong class="text-slate-900 dark:text-slate-200" id="statCourseCount">6</strong> Courses</span>
+                <span class="h-3 w-px bg-slate-300 dark:bg-slate-800"></span>
+                <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5 text-cyan-500"></i> <strong class="text-slate-900 dark:text-slate-200" id="statSectionCount">18</strong> Sections</span>
+                <span class="h-3 w-px bg-slate-300 dark:bg-slate-800"></span>
+                <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> <strong class="text-slate-900 dark:text-slate-200">6</strong> Buildings</span>
+            </div>
+
+            <!-- Light / Dark Mode Toggle Button -->
+            <button id="themeToggleBtn" class="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg transition" title="Toggle Light/Dark Theme">
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
+            </button>
+
+            <button id="addCourseBtn" class="flex items-center gap-1.5 text-xs font-medium bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 transition">
+                <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i> Add Course
+            </button>
+            <button id="resetDefaultsBtn" class="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg transition" title="Reset All Settings">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- Left Sidebar: Controls & Constraints -->
+        <aside class="w-80 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col shrink-0 custom-scrollbar overflow-y-auto">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800">
+                <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-200 flex items-center justify-between">
+                    <span>1. Required Courses</span>
+                    <span class="text-[11px] font-normal text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full" id="selectedCoursesBadge">5 Selected</span>
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Check required courses and expand to filter specific sections.</p>
+                
+                <div class="flex items-center justify-between text-xs mt-3">
+                    <button id="selectAllCoursesBtn" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Select All</button>
+                    <button id="clearAllCoursesBtn" class="text-slate-500 dark:text-slate-400 hover:underline">Clear All</button>
+                </div>
+
+                <!-- Course & Section Checklist with Expandable Sections -->
+                <div class="space-y-2.5 mt-3" id="courseChecklist">
+                    <!-- Populated dynamically with expandable section dropdowns -->
+                </div>
+            </div>
+
+            <!-- Step 2: Hard Constraints -->
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 space-y-4">
+                <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-200 flex items-center gap-2">
+                    <i data-lucide="sliders-horizontal" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+                    2. Hard Constraints
+                </h2>
+
+                <!-- Minimum Professor Rating Hard Filter -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500/20"></i> Minimum Prof Rating
+                        </span>
+                        <span class="text-[10px] text-indigo-600 dark:text-indigo-400 font-mono font-semibold" id="minProfLabel">Any Rating</span>
+                    </label>
+                    <select id="selectMinProfRating" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-200 text-xs rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                        <option value="0.0" selected>Any Rating (No Minimum)</option>
+                        <option value="3.5">3.5+ Stars or Higher</option>
+                        <option value="4.0">4.0+ Stars or Higher</option>
+                        <option value="4.5">4.5+ Stars (High Rated)</option>
+                        <option value="4.7">4.7+ Stars (Top Faculty Only)</option>
+                        <option value="4.8">4.8+ Stars (Elite Faculty)</option>
+                    </select>
+                </div>
+
+                <!-- No Friday Classes Toggle -->
+                <div class="flex items-center justify-between p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                            <i data-lucide="calendar-x" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-medium text-slate-900 dark:text-slate-200">No Friday Classes</div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400">Exclude Friday sessions</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleNoFriday" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <!-- Earliest Start Time -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-500"></i> Earliest Preferred Start Time
+                    </label>
+                    <select id="selectStartTime" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-200 text-xs rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                        <option value="08:00">08:00 AM (No Limit)</option>
+                        <option value="09:00" selected>09:00 AM or later</option>
+                        <option value="10:00">10:00 AM or later</option>
+                        <option value="11:00">11:00 AM or later</option>
+                    </select>
+                </div>
+
+                <!-- Max Back-to-Back Classes -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="repeat" class="w-3.5 h-3.5 text-amber-500"></i> Max Back-to-Back Classes
+                    </label>
+                    <select id="selectMaxConsecutive" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-200 text-xs rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                        <option value="99">No Limit</option>
+                        <option value="1">Max 1 Class (Gaps between all)</option>
+                        <option value="2" selected>Max 2 Consecutive Classes</option>
+                        <option value="3">Max 3 Consecutive Classes</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 3: Ranking Optimization Weights -->
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 space-y-4">
+                <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-200 flex items-center gap-2">
+                    <i data-lucide="scale" class="w-4 h-4 text-emerald-500"></i>
+                    3. Optimization Weights
+                </h2>
+
+                <!-- Weight Slider 1: Professor Rating -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-700 dark:text-slate-300 flex items-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500/20"></i> Prof Rating</span>
+                        <span class="font-mono text-indigo-600 dark:text-indigo-400 font-semibold" id="weightProfVal">70%</span>
+                    </div>
+                    <input type="range" id="sliderWeightProf" min="0" max="100" value="70" class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Prioritize schedules with highest average professor ratings.</p>
+                </div>
+
+                <!-- Weight Slider 2: Walking Time -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-700 dark:text-slate-300 flex items-center gap-1"><i data-lucide="footprints" class="w-3.5 h-3.5 text-emerald-500"></i> Min Walking Time</span>
+                        <span class="font-mono text-indigo-600 dark:text-indigo-400 font-semibold" id="weightWalkVal">80%</span>
+                    </div>
+                    <input type="range" id="sliderWeightWalk" min="0" max="100" value="80" class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Penalize back-to-back classes with long campus walks.</p>
+                </div>
+            </div>
+
+            <!-- Solve Trigger Button -->
+            <div class="p-5 mt-auto bg-slate-100 dark:bg-slate-950">
+                <button id="solveBtn" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition active:scale-[0.98]">
+                    <i data-lucide="zap" class="w-4 h-4 fill-white"></i>
+                    <span>Generate Optimal Schedules</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Center Workspace: Schedule Viewer & Analytics -->
+        <main class="flex-1 bg-white dark:bg-slate-900 flex flex-col custom-scrollbar overflow-y-auto">
+            
+            <!-- Toolbar & Schedule Navigator -->
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 backdrop-blur flex flex-wrap items-center justify-between gap-4 sticky top-0 z-20">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-1 shadow-sm">
+                        <button id="prevScheduleBtn" class="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </button>
+                        <span class="text-xs font-mono px-3 text-slate-800 dark:text-slate-200" id="scheduleIndexText">Option 1 of --</span>
+                        <button id="nextScheduleBtn" class="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Sort By Selector -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-slate-500 dark:text-slate-400 hidden sm:inline">Sort:</span>
+                        <select id="sortSchedulesSelect" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs rounded-lg p-2 outline-none">
+                            <option value="score">Highest Match Score</option>
+                            <option value="prof">Top Rated Professors</option>
+                            <option value="walk">Least Walking Distance</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button id="favoriteBtn" class="flex items-center gap-1.5 text-xs bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-lg transition shadow-sm">
+                        <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500"></i> <span id="favText">Save Schedule</span>
+                    </button>
+                    <button id="exportBtn" class="flex items-center gap-1.5 text-xs bg-indigo-600/10 dark:bg-indigo-600/20 hover:bg-indigo-600/20 dark:hover:bg-indigo-600/30 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-lg transition">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Schedule Metrics Dashboard -->
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="metricsContainer">
+                    
+                    <!-- Metric 1: Match Score -->
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center gap-3 shadow-sm">
+                        <div class="h-10 w-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <i data-lucide="award" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Match Score</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-slate-100 font-mono" id="metricScore">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Metric 2: Avg Prof Rating -->
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center gap-3 shadow-sm">
+                        <div class="h-10 w-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-500/20"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Avg Prof Score</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-slate-100 font-mono" id="metricProf">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Metric 3: Total Walking Time -->
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center gap-3 shadow-sm">
+                        <div class="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <i data-lucide="footprints" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Transit Time</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-slate-100 font-mono" id="metricWalk">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Metric 4: Total Credits -->
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center gap-3 shadow-sm">
+                        <div class="h-10 w-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Total Credits</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-slate-100 font-mono" id="metricCredits">--</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Transit Warning Alert Box -->
+                <div id="transitWarningBox" class="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 hidden animate-fade-in">
+                    <div class="flex items-center gap-2.5">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500 shrink-0"></i>
+                        <span id="transitWarningText">Notice: 1 tight transition between back-to-back classes with limited walking buffer.</span>
+                    </div>
+                    <span class="text-[10px] bg-amber-500/20 border border-amber-500/40 font-semibold px-2 py-0.5 rounded">Tight Transit</span>
+                </div>
+            </div>
+
+            <!-- Calendar View Container -->
+            <div class="p-5 flex-1 flex flex-col min-h-[640px]">
+                <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/80 rounded-2xl p-4 shadow-xl flex-1 flex flex-col overflow-x-auto min-w-[700px]">
+                    
+                    <!-- Days Header -->
+                    <div class="grid grid-cols-[60px_repeat(5,1fr)] text-center text-xs font-semibold text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-3 mb-2">
+                        <div>Time</div>
+                        <div>Mon (M)</div>
+                        <div>Tue (T)</div>
+                        <div>Wed (W)</div>
+                        <div>Thu (Th)</div>
+                        <div>Fri (F)</div>
+                    </div>
+
+                    <!-- Weekly Timetable Grid -->
+                    <div class="relative flex-1 calendar-grid min-h-[540px]" id="calendarTimetable">
+                        <!-- Left Time Scale -->
+                        <div class="flex flex-col justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500 select-none pr-2 pt-1 pb-1">
+                            <div>08:00</div>
+                            <div>09:00</div>
+                            <div>10:00</div>
+                            <div>11:00</div>
+                            <div>12:00</div>
+                            <div>13:00</div>
+                            <div>14:00</div>
+                            <div>15:00</div>
+                            <div>16:00</div>
+                            <div>17:00</div>
+                            <div>18:00</div>
+                        </div>
+
+                        <!-- 5 Day Columns with Horizontal Time Gridlines -->
+                        <div class="col-span-5 relative grid grid-cols-5 border-l border-slate-200 dark:border-slate-800/60" id="calendarColumns">
+                            <!-- Background horizontal gridlines -->
+                            <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                                <div class="border-b border-slate-200/60 dark:border-slate-800/40 w-full h-0"></div>
+                            </div>
+
+                            <!-- Day 1: Mon -->
+                            <div class="relative border-r border-slate-200/60 dark:border-slate-800/60 h-full" data-day="M"></div>
+                            <!-- Day 2: Tue -->
+                            <div class="relative border-r border-slate-200/60 dark:border-slate-800/60 h-full" data-day="T"></div>
+                            <!-- Day 3: Wed -->
+                            <div class="relative border-r border-slate-200/60 dark:border-slate-800/60 h-full" data-day="W"></div>
+                            <!-- Day 4: Thu -->
+                            <div class="relative border-r border-slate-200/60 dark:border-slate-800/60 h-full" data-day="Th"></div>
+                            <!-- Day 5: Fri -->
+                            <div class="relative h-full" data-day="F"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Section List & Transit Details -->
+                <div class="mt-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-2xl p-5 shadow-sm">
+                    <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-200 mb-3 flex items-center justify-between">
+                        <span>Selected Sections Breakdown</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">Schedule Option Details</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="sectionsBreakdownList">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal: Add Custom Course Section -->
+    <div id="addCourseModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i> Add Course Section
+                </h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Duplicate Warning Alert Badge inside Modal -->
+            <div id="duplicateAlert" class="mb-4 p-2.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-600 dark:text-rose-400 hidden flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                <span id="duplicateAlertText">Section ID already exists! Duplicate sections are not allowed.</span>
+            </div>
+            
+            <form id="addCourseForm" class="space-y-4 text-xs">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Course Code</label>
+                        <input type="text" id="newCourseId" placeholder="e.g. ECON 101" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Section ID</label>
+                        <input type="text" id="newSectionId" placeholder="e.g. ECON101-03" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Course Title</label>
+                    <input type="text" id="newCourseTitle" placeholder="e.g. Microeconomics" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Professor Name</label>
+                        <input type="text" id="newProf" placeholder="Dr. Smith" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">RMP Rating (1-5)</label>
+                        <input type="number" step="0.1" min="1" max="5" id="newRmp" value="4.5" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Days (comma separated)</label>
+                        <input type="text" id="newDays" placeholder="M, W, F" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Building Location</label>
+                        <select id="newBuilding" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                            <option value="Science Hall">Science Hall</option>
+                            <option value="Math Annex">Math Annex</option>
+                            <option value="Engineering Quad">Engineering Quad</option>
+                            <option value="Humanities Center">Humanities Center</option>
+                            <option value="Arts Building">Arts Building</option>
+                            <option value="Tech Center">Tech Center</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
+                        <input type="time" id="newStart" value="10:00" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">End Time</label>
+                        <input type="time" id="newEnd" value="11:15" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-2.5 outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition">Add Section Option</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // ------------------------------------------------------------------
+        // 1. Data Models & Constants
+        // ------------------------------------------------------------------
+
+        let INITIAL_COURSES = [];
+
+        // Walking distance / transit lookup matrix in minutes
+        const DISTANCE_MATRIX = {
+            "Engineering Quad": { "Math Annex": 5, "Science Hall": 12, "Humanities Center": 15, "Arts Building": 18, "Tech Center": 4 },
+            "Math Annex": { "Engineering Quad": 5, "Science Hall": 8, "Humanities Center": 10, "Arts Building": 14, "Tech Center": 7 },
+            "Science Hall": { "Engineering Quad": 12, "Math Annex": 8, "Humanities Center": 12, "Arts Building": 15, "Tech Center": 11 },
+            "Humanities Center": { "Engineering Quad": 15, "Math Annex": 10, "Science Hall": 12, "Arts Building": 5, "Tech Center": 14 },
+            "Arts Building": { "Engineering Quad": 18, "Math Annex": 14, "Science Hall": 15, "Humanities Center": 5, "Tech Center": 16 },
+            "Tech Center": { "Engineering Quad": 4, "Math Annex": 7, "Science Hall": 11, "Humanities Center": 14, "Arts Building": 16 }
+        };
+
+        // Color Theme Palettes for Calendar Cards
+        const COLOR_STYLES = {
+            indigo: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/40 hover:bg-indigo-500/25",
+            sky: "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/40 hover:bg-sky-500/25",
+            amber: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40 hover:bg-amber-500/25",
+            emerald: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25",
+            rose: "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/40 hover:bg-rose-500/25",
+            violet: "bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/40 hover:bg-violet-500/25"
+        };
+
+        // ------------------------------------------------------------------
+        // 2. Application State
+        // ------------------------------------------------------------------
+        let appState = {
+            theme: 'dark', // 'dark' | 'light'
+            courses: [],
+            selectedCourseIds: [],
+            expandedCourseIds: [], // Expand dropdown state for sidebar
+            disabledSectionIds: [], // Track unselected individual sections
+            minProfRating: 0.0, // Hard filter: minimum RMP score
+            noFriday: false,
+            earliestStartTime: "09:00",
+            maxConsecutive: 2,
+            weightProf: 70,
+            weightWalk: 80,
+            sortMode: "score",
+            generatedSchedules: [],
+            activeScheduleIndex: 0,
+            savedSchedules: []
+        };
+
+        // ------------------------------------------------------------------
+        // 3. Time Helper Functions
+        // ------------------------------------------------------------------
+        function timeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function getWalkingDistance(b1, b2) {
+            if (b1 === b2) return 0;
+            if (DISTANCE_MATRIX[b1] && DISTANCE_MATRIX[b1][b2]) return DISTANCE_MATRIX[b1][b2];
+            return 10;
+        }
+
+        // ------------------------------------------------------------------
+        // 4. Constraint Solver Engine
+        // ------------------------------------------------------------------
+        function generateCartesianProduct(arrays) {
+            return arrays.reduce((acc, curr) => {
+                const res = [];
+                acc.forEach(a => {
+                    curr.forEach(b => {
+                        res.push([...a, b]);
+                    });
+                });
+                return res;
+            }, [[]]);
+        }
+
+        function solveSchedules() {
+            const activeCourses = appState.courses.filter(c => appState.selectedCourseIds.includes(c.id));
+            if (activeCourses.length === 0) {
+                appState.generatedSchedules = [];
+                appState.activeScheduleIndex = 0;
+                renderUI();
+                return;
+            }
+
+            // Filter out disabled sections and sections below minimum RMP rating threshold
+            const sectionsByCourse = activeCourses.map(c => {
+                const validSecs = c.sections.filter(s => {
+                    if (appState.disabledSectionIds.includes(s.id)) return false;
+                    if (s.rmp < appState.minProfRating) return false; // Minimum Prof Rating Hard Filter
+                    return true;
+                }).map(s => ({ ...s, courseId: c.id, courseTitle: c.title, credits: c.credits, color: c.color }));
+                return validSecs;
+            }).filter(secs => secs.length > 0);
+
+            if (sectionsByCourse.length < activeCourses.length) {
+                // At least one selected course has no valid sections matching the minimum rating or enabled filter
+                appState.generatedSchedules = [];
+                appState.activeScheduleIndex = 0;
+                renderUI();
+                return;
+            }
+
+            const candidateCombinations = generateCartesianProduct(sectionsByCourse);
+
+            const validSchedules = [];
+            const startLimitMinutes = timeToMinutes(appState.earliestStartTime);
+
+            for (const schedule of candidateCombinations) {
+                let isConflict = false;
+
+                // Check 1: Time overlaps
+                for (let i = 0; i < schedule.length; i++) {
+                    for (let j = i + 1; j < schedule.length; j++) {
+                        const secA = schedule[i];
+                        const secB = schedule[j];
+
+                        const sharedDays = secA.days.filter(d => secB.days.includes(d));
+                        if (sharedDays.length > 0) {
+                            const startA = timeToMinutes(secA.startTime);
+                            const endA = timeToMinutes(secA.endTime);
+                            const startB = timeToMinutes(secB.startTime);
+                            const endB = timeToMinutes(secB.endTime);
+
+                            if (!(endA <= startB || endB <= startA)) {
+                                isConflict = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (isConflict) break;
+                }
+                if (isConflict) continue;
+
+                // Check 2: No Friday constraint
+                if (appState.noFriday) {
+                    const hasFriday = schedule.some(sec => sec.days.includes("F"));
+                    if (hasFriday) continue;
+                }
+
+                // Check 3: Preferred Start Time constraint
+                const startsTooEarly = schedule.some(sec => timeToMinutes(sec.startTime) < startLimitMinutes);
+                if (startsTooEarly) continue;
+
+                // Check 4: Max Consecutive Classes limit
+                if (appState.maxConsecutive < 10) {
+                    let exceedsConsecutive = false;
+                    const daysList = ["M", "T", "W", "Th", "F"];
+
+                    for (const day of daysList) {
+                        const daySections = schedule.filter(sec => sec.days.includes(day))
+                            .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+                        let consecutiveCount = 1;
+                        for (let k = 0; k < daySections.length - 1; k++) {
+                            const endCurrent = timeToMinutes(daySections[k].endTime);
+                            const startNext = timeToMinutes(daySections[k + 1].startTime);
+                            const gap = startNext - endCurrent;
+
+                            if (gap <= 25) {
+                                consecutiveCount++;
+                                if (consecutiveCount > appState.maxConsecutive) {
+                                    exceedsConsecutive = true;
+                                    break;
+                                }
+                            } else {
+                                consecutiveCount = 1;
+                            }
+                        }
+                        if (exceedsConsecutive) break;
+                    }
+                    if (exceedsConsecutive) continue;
+                }
+
+                // Schedule passed all hard constraints! Calculate Metrics & Score
+                const metrics = evaluateScheduleMetrics(schedule);
+                validSchedules.push({
+                    sections: schedule,
+                    ...metrics
+                });
+            }
+
+            sortScheduleList(validSchedules);
+            appState.generatedSchedules = validSchedules;
+            appState.activeScheduleIndex = 0;
+            renderUI();
+        }
+
+        function evaluateScheduleMetrics(schedule) {
+            const totalRmp = schedule.reduce((sum, sec) => sum + sec.rmp, 0);
+            const avgRmp = totalRmp / schedule.length;
+
+            let totalWalkingMinutes = 0;
+            let tightTransitionsCount = 0;
+            const tightAlerts = [];
+
+            const daysList = ["M", "T", "W", "Th", "F"];
+
+            for (const day of daysList) {
+                const daySections = schedule.filter(sec => sec.days.includes(day))
+                    .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+                for (let i = 0; i < daySections.length - 1; i++) {
+                    const secA = daySections[i];
+                    const secB = daySections[i + 1];
+
+                    const gapMins = timeToMinutes(secB.startTime) - timeToMinutes(secA.endTime);
+                    const walkMins = getWalkingDistance(secA.building, secB.building);
+
+                    if (gapMins <= 30) {
+                        totalWalkingMinutes += walkMins;
+                        if (walkMins > gapMins || (gapMins <= 15 && walkMins >= 10)) {
+                            tightTransitionsCount++;
+                            tightAlerts.push({ day, secA: secA.courseId, secB: secB.courseId });
+                        }
+                    }
+                }
+            }
+
+            const rmpScoreComponent = ((avgRmp - 1) / 4) * 100;
+            const walkScoreComponent = Math.max(0, 100 - (totalWalkingMinutes * 1.5));
+
+            const totalWeight = appState.weightProf + appState.weightWalk;
+            const finalScore = totalWeight > 0 
+                ? Math.round(((rmpScoreComponent * appState.weightProf) + (walkScoreComponent * appState.weightWalk)) / totalWeight)
+                : Math.round(rmpScoreComponent);
+
+            const totalCredits = schedule.reduce((sum, sec) => sum + sec.credits, 0);
+
+            return {
+                matchScore: Math.min(99, Math.max(50, finalScore)),
+                avgRmp: Math.round(avgRmp * 100) / 100,
+                totalWalkingMinutes,
+                tightTransitionsCount,
+                tightAlerts,
+                totalCredits
+            };
+        }
+
+        function sortScheduleList(schedules) {
+            if (appState.sortMode === "score") {
+                schedules.sort((a, b) => b.matchScore - a.matchScore);
+            } else if (appState.sortMode === "prof") {
+                schedules.sort((a, b) => b.avgRmp - a.avgRmp);
+            } else if (appState.sortMode === "walk") {
+                schedules.sort((a, b) => a.totalWalkingMinutes - b.totalWalkingMinutes);
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // 5. DOM Rendering & UI Updates
+        // ------------------------------------------------------------------
+        function renderCourseChecklist() {
+            const container = document.getElementById('courseChecklist');
+            container.innerHTML = '';
+
+            appState.courses.forEach(course => {
+                const isSelected = appState.selectedCourseIds.includes(course.id);
+                const isExpanded = appState.expandedCourseIds.includes(course.id);
+                const colorStyle = COLOR_STYLES[course.color] || COLOR_STYLES.indigo;
+
+                const wrapperDiv = document.createElement('div');
+                wrapperDiv.className = 'rounded-xl border transition overflow-hidden ' + 
+                    (isSelected 
+                        ? 'bg-white dark:bg-slate-900 border-indigo-500/40 shadow-sm' 
+                        : 'bg-slate-100 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 opacity-80');
+
+                // Course Header Bar
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'p-3 flex items-center justify-between cursor-pointer select-none';
+                headerDiv.innerHTML = `
+                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                        <button class="expand-toggle text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5" title="Expand sections">
+                            <i data-lucide="${isExpanded ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4"></i>
+                        </button>
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} class="course-checkbox w-4 h-4 rounded text-indigo-600 bg-slate-100 dark:bg-slate-950 border-slate-300 dark:border-slate-700 focus:ring-0 cursor-pointer">
+                        <div class="truncate flex-1">
+                            <div class="font-semibold text-xs flex items-center gap-2 text-slate-900 dark:text-slate-100">
+                                <span>${course.id}</span>
+                                <span class="text-[10px] px-1.5 py-0.2 rounded border ${colorStyle}">${course.credits} Cr</span>
+                            </div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${course.title}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1 shrink-0 ml-2">
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">${course.sections.length} sec</span>
+                        <button class="remove-course-btn p-1 text-slate-400 hover:text-rose-500 transition rounded" title="Remove course">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Handle Header Clicks
+                const expandBtn = headerDiv.querySelector('.expand-toggle');
+                expandBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleExpandCourse(course.id);
+                });
+
+                const checkbox = headerDiv.querySelector('.course-checkbox');
+                checkbox.addEventListener('change', () => {
+                    toggleCourseSelection(course.id);
+                });
+
+                const removeBtn = headerDiv.querySelector('.remove-course-btn');
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeCourse(course.id);
+                });
+
+                wrapperDiv.appendChild(headerDiv);
+
+                // Expanded Section List Dropdown
+                if (isExpanded && course.sections.length > 0) {
+                    const sectionsDiv = document.createElement('div');
+                    sectionsDiv.className = 'px-3 pb-3 pt-1 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40 space-y-1.5 text-xs';
+
+                    course.sections.forEach(sec => {
+                        const isSectionEnabled = !appState.disabledSectionIds.includes(sec.id);
+                        const secRow = document.createElement('div');
+                        secRow.className = `p-2 rounded-lg border flex items-center justify-between transition ${
+                            isSectionEnabled 
+                                ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200' 
+                                : 'bg-slate-200/50 dark:bg-slate-950 border-slate-200 dark:border-slate-900 text-slate-400 opacity-60'
+                        }`;
+
+                        secRow.innerHTML = `
+                            <div class="flex items-center gap-2 min-w-0">
+                                <input type="checkbox" ${isSectionEnabled ? 'checked' : ''} class="sec-checkbox w-3.5 h-3.5 rounded text-indigo-600 cursor-pointer">
+                                <div class="truncate">
+                                    <div class="font-mono text-[11px] font-semibold flex items-center gap-1.5">
+                                        <span>${sec.id}</span>
+                                        <span class="text-[9px] text-amber-600 dark:text-amber-400">⭐ ${sec.rmp}</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-500 dark:text-slate-400 truncate">👨‍🏫 ${sec.professor}</div>
+                                    <div class="text-[9px] text-slate-400 dark:text-slate-500 font-mono">${sec.days.join('')} ${sec.startTime}-${sec.endTime}</div>
+                                </div>
+                            </div>
+                            <button class="remove-sec-btn p-1 text-slate-400 hover:text-rose-500 transition rounded shrink-0" title="Delete section">
+                                <i data-lucide="x" class="w-3 h-3"></i>
+                            </button>
+                        `;
+
+                        const secCheckbox = secRow.querySelector('.sec-checkbox');
+                        secCheckbox.addEventListener('change', () => {
+                            toggleSectionEnabled(sec.id);
+                        });
+
+                        const removeSecBtn = secRow.querySelector('.remove-sec-btn');
+                        removeSecBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            removeSection(course.id, sec.id);
+                        });
+
+                        sectionsDiv.appendChild(secRow);
+                    });
+
+                    wrapperDiv.appendChild(sectionsDiv);
+                }
+
+                container.appendChild(wrapperDiv);
+            });
+
+            document.getElementById('selectedCoursesBadge').textContent = `${appState.selectedCourseIds.length} Selected`;
+            document.getElementById('statCourseCount').textContent = appState.courses.length;
+            const totalSecs = appState.courses.reduce((sum, c) => sum + c.sections.length, 0);
+            document.getElementById('statSectionCount').textContent = totalSecs;
+
+            lucide.createIcons();
+        }
+
+        function toggleExpandCourse(courseId) {
+            if (appState.expandedCourseIds.includes(courseId)) {
+                appState.expandedCourseIds = appState.expandedCourseIds.filter(id => id !== courseId);
+            } else {
+                appState.expandedCourseIds.push(courseId);
+            }
+            renderCourseChecklist();
+        }
+
+        function toggleCourseSelection(courseId) {
+            if (appState.selectedCourseIds.includes(courseId)) {
+                appState.selectedCourseIds = appState.selectedCourseIds.filter(id => id !== courseId);
+            } else {
+                appState.selectedCourseIds.push(courseId);
+            }
+            renderCourseChecklist();
+            solveSchedules();
+        }
+
+        function toggleSectionEnabled(sectionId) {
+            if (appState.disabledSectionIds.includes(sectionId)) {
+                appState.disabledSectionIds = appState.disabledSectionIds.filter(id => id !== sectionId);
+            } else {
+                appState.disabledSectionIds.push(sectionId);
+            }
+            renderCourseChecklist();
+            solveSchedules();
+        }
+
+        function removeCourse(courseId) {
+            appState.courses = appState.courses.filter(c => c.id !== courseId);
+            appState.selectedCourseIds = appState.selectedCourseIds.filter(id => id !== courseId);
+            appState.expandedCourseIds = appState.expandedCourseIds.filter(id => id !== courseId);
+            renderCourseChecklist();
+            solveSchedules();
+        }
+
+        function removeSection(courseId, sectionId) {
+            const course = appState.courses.find(c => c.id === courseId);
+            if (course) {
+                course.sections = course.sections.filter(s => s.id !== sectionId);
+                if (course.sections.length === 0) {
+                    removeCourse(courseId);
+                    return;
+                }
+            }
+            renderCourseChecklist();
+            solveSchedules();
+        }
+
+        function renderCalendar() {
+            const dayColumns = document.querySelectorAll('#calendarColumns [data-day]');
+            dayColumns.forEach(col => col.innerHTML = '');
+
+            const currentSchedule = appState.generatedSchedules[appState.activeScheduleIndex];
+            if (!currentSchedule) return;
+
+            const gridStartMins = 8 * 60;
+            const gridEndMins = 18 * 60;
+            const totalGridMins = gridEndMins - gridStartMins;
+
+            currentSchedule.sections.forEach(sec => {
+                const startMins = timeToMinutes(sec.startTime);
+                const endMins = timeToMinutes(sec.endTime);
+
+                const topPercent = ((startMins - gridStartMins) / totalGridMins) * 100;
+                const heightPercent = ((endMins - startMins) / totalGridMins) * 100;
+
+                const colorClass = COLOR_STYLES[sec.color] || COLOR_STYLES.indigo;
+
+                sec.days.forEach(day => {
+                    const col = document.querySelector(`#calendarColumns [data-day="${day}"]`);
+                    if (col) {
+                        const card = document.createElement('div');
+                        card.className = `absolute left-1 right-1 rounded-xl p-2.5 border shadow-lg flex flex-col justify-between overflow-hidden cursor-pointer transition transform hover:scale-[1.02] hover:z-10 ${colorClass} animate-fade-in`;
+                        card.style.top = `${topPercent}%`;
+                        card.style.height = `${heightPercent}%`;
+
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex items-center justify-between font-bold text-xs">
+                                    <span>${sec.courseId}</span>
+                                    <span class="text-[9px] bg-slate-950/40 text-white px-1.5 py-0.5 rounded font-mono">⭐ ${sec.rmp}</span>
+                                </div>
+                                <div class="text-[10px] opacity-90 truncate font-medium">${sec.professor}</div>
+                            </div>
+
+                            <div class="mt-auto">
+                                <div class="text-[10px] font-mono opacity-80 flex items-center justify-between">
+                                    <span>${sec.startTime} - ${sec.endTime}</span>
+                                </div>
+                                <div class="text-[9px] opacity-75 truncate flex items-center gap-1 mt-0.5">
+                                    <i data-lucide="map-pin" class="w-2.5 h-2.5"></i> ${sec.building}
+                                </div>
+                            </div>
+                        `;
+
+                        col.appendChild(card);
+                    }
+                });
+            });
+
+            lucide.createIcons();
+        }
+
+        function renderMetrics() {
+            const totalCount = appState.generatedSchedules.length;
+            const currentIndex = totalCount > 0 ? appState.activeScheduleIndex + 1 : 0;
+            
+            document.getElementById('scheduleIndexText').textContent = totalCount > 0 
+                ? `Option ${currentIndex} of ${totalCount}` 
+                : `0 Options Found`;
+
+            document.getElementById('prevScheduleBtn').disabled = appState.activeScheduleIndex <= 0;
+            document.getElementById('nextScheduleBtn').disabled = appState.activeScheduleIndex >= totalCount - 1;
+
+            const current = appState.generatedSchedules[appState.activeScheduleIndex];
+
+            if (!current) {
+                document.getElementById('metricScore').textContent = '--';
+                document.getElementById('metricProf').textContent = '--';
+                document.getElementById('metricWalk').textContent = '--';
+                document.getElementById('metricCredits').textContent = '--';
+                document.getElementById('transitWarningBox').classList.add('hidden');
+                document.getElementById('sectionsBreakdownList').innerHTML = `<p class="text-xs text-slate-500 col-span-full">No valid schedule combination satisfies all selected constraints. Try lowering the Minimum Prof Rating or adjusting filters.</p>`;
+                return;
+            }
+
+            document.getElementById('metricScore').textContent = `${current.matchScore}/100`;
+            document.getElementById('metricProf').textContent = `${current.avgRmp} / 5.0`;
+            document.getElementById('metricWalk').textContent = `${current.totalWalkingMinutes} mins`;
+            document.getElementById('metricCredits').textContent = `${current.totalCredits} hrs`;
+
+            const warningBox = document.getElementById('transitWarningBox');
+            if (current.tightTransitionsCount > 0) {
+                warningBox.classList.remove('hidden');
+                document.getElementById('transitWarningText').textContent = `Notice: ${current.tightTransitionsCount} tight campus transition(s) detected between consecutive classes.`;
+            } else {
+                warningBox.classList.add('hidden');
+            }
+
+            const breakdownContainer = document.getElementById('sectionsBreakdownList');
+            breakdownContainer.innerHTML = '';
+
+            current.sections.forEach(sec => {
+                const colorStyle = COLOR_STYLES[sec.color] || COLOR_STYLES.indigo;
+                const div = document.createElement('div');
+                div.className = 'p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs flex flex-col justify-between';
+                div.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between font-semibold text-slate-900 dark:text-slate-200">
+                            <span>${sec.courseId} (${sec.id})</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded border ${colorStyle}">⭐ ${sec.rmp} RMP</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${sec.courseTitle}</div>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-slate-500 dark:text-slate-400 text-[11px]">
+                        <span>👨‍🏫 ${sec.professor}</span>
+                        <span>📍 ${sec.building}</span>
+                    </div>
+                `;
+                breakdownContainer.appendChild(div);
+            });
+        }
+
+        function renderUI() {
+            renderCourseChecklist();
+            renderCalendar();
+            renderMetrics();
+        }
+
+        // ------------------------------------------------------------------
+        // 6. Event Listeners & Controls
+        // ------------------------------------------------------------------
+        // Theme Toggle Button
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+            appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
+            if (appState.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        document.getElementById('selectMinProfRating').addEventListener('change', (e) => {
+            appState.minProfRating = parseFloat(e.target.value);
+            const labelMap = { 0.0: 'Any Rating', 3.5: '3.5+ Stars', 4.0: '4.0+ Stars', 4.5: '4.5+ Stars', 4.7: '4.7+ Stars', 4.8: '4.8+ Stars' };
+            document.getElementById('minProfLabel').textContent = labelMap[appState.minProfRating] || 'Custom';
+            solveSchedules();
+        });
+
+        document.getElementById('solveBtn').addEventListener('click', () => solveSchedules());
+
+        document.getElementById('selectAllCoursesBtn').addEventListener('click', () => {
+            appState.selectedCourseIds = appState.courses.map(c => c.id);
+            appState.disabledSectionIds = [];
+            renderCourseChecklist();
+            solveSchedules();
+        });
+
+        document.getElementById('clearAllCoursesBtn').addEventListener('click', () => {
+            appState.selectedCourseIds = [];
+            renderCourseChecklist();
+            solveSchedules();
+        });
+
+        document.getElementById('toggleNoFriday').addEventListener('change', (e) => {
+            appState.noFriday = e.target.checked;
+            solveSchedules();
+        });
+
+        document.getElementById('selectStartTime').addEventListener('change', (e) => {
+            appState.earliestStartTime = e.target.value;
+            solveSchedules();
+        });
+
+        document.getElementById('selectMaxConsecutive').addEventListener('change', (e) => {
+            appState.maxConsecutive = parseInt(e.target.value, 10);
+            solveSchedules();
+        });
+
+        document.getElementById('sliderWeightProf').addEventListener('input', (e) => {
+            appState.weightProf = parseInt(e.target.value, 10);
+            document.getElementById('weightProfVal').textContent = `${appState.weightProf}%`;
+            solveSchedules();
+        });
+
+        document.getElementById('sliderWeightWalk').addEventListener('input', (e) => {
+            appState.weightWalk = parseInt(e.target.value, 10);
+            document.getElementById('weightWalkVal').textContent = `${appState.weightWalk}%`;
+            solveSchedules();
+        });
+
+        document.getElementById('sortSchedulesSelect').addEventListener('change', (e) => {
+            appState.sortMode = e.target.value;
+            sortScheduleList(appState.generatedSchedules);
+            appState.activeScheduleIndex = 0;
+            renderUI();
+        });
+
+        document.getElementById('prevScheduleBtn').addEventListener('click', () => {
+            if (appState.activeScheduleIndex > 0) {
+                appState.activeScheduleIndex--;
+                renderCalendar();
+                renderMetrics();
+            }
+        });
+
+        document.getElementById('nextScheduleBtn').addEventListener('click', () => {
+            if (appState.activeScheduleIndex < appState.generatedSchedules.length - 1) {
+                appState.activeScheduleIndex++;
+                renderCalendar();
+                renderMetrics();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            if (e.key === 'ArrowLeft') document.getElementById('prevScheduleBtn').click();
+            else if (e.key === 'ArrowRight') document.getElementById('nextScheduleBtn').click();
+        });
+
+        document.getElementById('resetDefaultsBtn').addEventListener('click', () => {
+            appState.courses = JSON.parse(JSON.stringify(INITIAL_COURSES));
+            appState.selectedCourseIds = ["CS 101", "MATH 302", "PHYS 201", "HIST 110", "ENG 105"];
+            appState.expandedCourseIds = ["CS 101"];
+            appState.disabledSectionIds = [];
+            appState.minProfRating = 0.0;
+            appState.noFriday = false;
+            appState.earliestStartTime = "09:00";
+            appState.maxConsecutive = 2;
+            appState.weightProf = 70;
+            appState.weightWalk = 80;
+
+            document.getElementById('selectMinProfRating').value = "0.0";
+            document.getElementById('minProfLabel').textContent = "Any Rating";
+            document.getElementById('toggleNoFriday').checked = false;
+            document.getElementById('selectStartTime').value = "09:00";
+            document.getElementById('selectMaxConsecutive').value = "2";
+            document.getElementById('sliderWeightProf').value = 70;
+            document.getElementById('weightProfVal').textContent = "70%";
+            document.getElementById('sliderWeightWalk').value = 80;
+            document.getElementById('weightWalkVal').textContent = "80%";
+
+            solveSchedules();
+        });
+
+        // Modal Controls & Duplicate Prevention
+        const modal = document.getElementById('addCourseModal');
+        const duplicateAlert = document.getElementById('duplicateAlert');
+        const duplicateAlertText = document.getElementById('duplicateAlertText');
+
+        document.getElementById('addCourseBtn').addEventListener('click', () => {
+            duplicateAlert.classList.add('hidden');
+            modal.classList.remove('hidden');
+        });
+        document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
+
+        document.getElementById('addCourseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            duplicateAlert.classList.add('hidden');
+
+            const courseId = document.getElementById('newCourseId').value.toUpperCase().trim();
+            const sectionId = document.getElementById('newSectionId').value.toUpperCase().trim();
+            const title = document.getElementById('newCourseTitle').value.trim();
+            const prof = document.getElementById('newProf').value.trim();
+            const rmp = parseFloat(document.getElementById('newRmp').value);
+            const days = document.getElementById('newDays').value.split(',').map(d => d.trim().toUpperCase());
+            const building = document.getElementById('newBuilding').value;
+            const start = document.getElementById('newStart').value;
+            const end = document.getElementById('newEnd').value;
+
+            // Duplicate Section Check Rule: Check if section ID already exists anywhere
+            let isDuplicate = false;
+            let existingCourse = null;
+
+            appState.courses.forEach(c => {
+                c.sections.forEach(s => {
+                    if (s.id.toUpperCase() === sectionId) {
+                    isDuplicate = true;
+                        existingCourse = c.id;
+                    }
+                });
+            });
+
+            if (isDuplicate) {
+                duplicateAlertText.textContent = `Section '${sectionId}' already exists under course ${existingCourse}! Duplicate sections are not allowed.`;
+                duplicateAlert.classList.remove('hidden');
+                lucide.createIcons();
+                return; // Block addition of duplicate section!
+            }
+
+            let course = appState.courses.find(c => c.id === courseId);
+            const colors = ["indigo", "sky", "amber", "emerald", "rose", "violet"];
+
+            if (!course) {
+                course = {
+                    id: courseId,
+                    title: title,
+                    credits: 3,
+                    color: colors[appState.courses.length % colors.length],
+                    sections: []
+                };
+                appState.courses.push(course);
+                appState.selectedCourseIds.push(courseId);
+                appState.expandedCourseIds.push(courseId);
+            }
+
+            course.sections.push({
+                id: sectionId,
+                professor: prof,
+                rmp: rmp,
+                days: days,
+                startTime: start,
+                endTime: end,
+                building: building
+            });
+
+            modal.classList.add('hidden');
+            solveSchedules();
+
+            // 💡 ADD THIS LINE: Send updated appState.courses to the backend API
+            saveCoursesToBackend();
+        });
+
+        document.getElementById('favoriteBtn').addEventListener('click', () => {
+            const btnText = document.getElementById('favText');
+            btnText.textContent = 'Saved!';
+            setTimeout(() => btnText.textContent = 'Save Schedule', 2000);
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const current = appState.generatedSchedules[appState.activeScheduleIndex];
+            if (!current) return;
+            const jsonStr = JSON.stringify(current.sections, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `courseflow_schedule_option_${appState.activeScheduleIndex + 1}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // ------------------------------------------------------------------
+        // API & Backend Persistence
+        // ------------------------------------------------------------------
+
+        // Load courses from server on initial page load
+        async function initApp() {
+            try {
+                // Fetch from Express API endpoint
+                const response = await fetch('http://localhost:3000/api/courses');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+                INITIAL_COURSES = await response.json();
+                appState.courses = JSON.parse(JSON.stringify(INITIAL_COURSES));
+                appState.selectedCourseIds = appState.courses.slice(0, 5).map(c => c.id);
+                if (appState.courses.length > 0) {
+                    appState.expandedCourseIds = [appState.courses[0].id];
+                }
+
+                lucide.createIcons();
+                solveSchedules();
+            } catch (error) {
+                console.error("Failed to load course data from backend:", error);
+            }
+        }
+
+        // Save courses back to courses.json via POST request
+        async function saveCoursesToBackend() {
+            try {
+                const response = await fetch('http://localhost:3000/api/courses', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(appState.courses)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Successfully saved to courses.json:', data);
+            } catch (err) {
+                console.error('Failed to save courses to backend:', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
