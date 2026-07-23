@@ -1,0 +1,2 @@
+node scripts/update-docs.js
+git add DOCS.md
