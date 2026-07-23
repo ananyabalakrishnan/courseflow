@@ -567,7 +567,7 @@ h1, h2, h3, h4, h5, h6 {
 
             // Filter out disabled sections and sections below minimum RMP rating threshold
             const sectionsByCourse = activeCourses.map(c => {
-                const validSecs = c.sections.filter(s => {
+                const validSecs = (c.sections || [c]).filter(s => {
                     if (appState.disabledSectionIds.includes(s.id)) return false;
                     if (s.rmp < appState.minProfRating) return false; // Minimum Prof Rating Hard Filter
                     return true;

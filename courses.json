@@ -1,22 +1,36 @@
 [
   {
     "id": "CS 101",
-    "section": "01",
     "title": "Intro to Computer Science",
-    "professor": "Dr. Smith",
-    "rmp": 4.5,
-    "days": ["M", "W", "F"],
-    "startTime": "09:00",
-    "endTime": "09:50"
+    "credits": 3,
+    "color": "indigo",
+    "sections": [
+      {
+        "id": "CS101-01",
+        "section": "01",
+        "professor": "Dr. Smith",
+        "rmp": 4.5,
+        "days": ["M", "W", "F"],
+        "startTime": "09:00",
+        "endTime": "09:50"
+      }
+    ]
   },
   {
     "id": "PHYS 101",
-    "section": "02",
     "title": "General Physics",
-    "professor": "Dr. Jones",
-    "rmp": 4.0,
-    "days": ["T", "Th"],
-    "startTime": "10:30",
-    "endTime": "11:45"
+    "credits": 4,
+    "color": "amber",
+    "sections": [
+      {
+        "id": "PHYS101-01",
+        "section": "01",
+        "professor": "Dr. Jones",
+        "rmp": 4.0,
+        "days": ["T", "Th"],
+        "startTime": "10:30",
+        "endTime": "11:45"
+      }
+    ]
   }
 ]
