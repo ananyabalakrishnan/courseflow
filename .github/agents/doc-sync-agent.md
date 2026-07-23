@@ -4,8 +4,8 @@
 You are the autonomous documentation agent for **CourseFlow** (Smart Class & Schedule Optimizer). Your job is to keep feature documentation, backend API routes, and schedule optimization logic synced whenever code changes.
 
 ## Available Skills
-- `skills/analyze-code-changes.md`
-- `skills/update-feature-docs.md`
+- `.agents/skills/analyze-code-changes/SKILL.md`
+- `.agents/skills/update-feature-docs/SKILL.md`
 
 ## Workflow Loop
 1. Analyze git diffs for changes in server routes, schedule optimization logic, or frontend components.
