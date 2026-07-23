@@ -1,60 +1,22 @@
 [
   {
     "id": "CS 101",
+    "section": "01",
     "title": "Intro to Computer Science",
-    "credits": 4,
-    "color": "indigo",
-    "sections": [
-      {
-        "id": "CS101-01",
-        "professor": "Dr. Alan Turing",
-        "rmp": 4.9,
-        "days": [
-          "M",
-          "W",
-          "F"
-        ],
-        "startTime": "09:00",
-        "endTime": "10:15",
-        "building": "Engineering Quad"
-      },
-      {
-        "id": "CS101-02",
-        "professor": "Dr. Grace Hopper",
-        "rmp": 4.7,
-        "days": [
-          "T",
-          "Th"
-        ],
-        "startTime": "10:30",
-        "endTime": "11:45",
-        "building": "Tech Center"
-      },
-      {
-        "id": "CS101-03",
-        "professor": "Prof. John von Neumann",
-        "rmp": 4.2,
-        "days": [
-          "M",
-          "W",
-          "F"
-        ],
-        "startTime": "13:00",
-        "endTime": "14:15",
-        "building": "Engineering Quad"
-      },
-      {
-        "id": "CS101-04",
-        "professor": "Dr. Grace Hopper",
-        "rmp": 4.7,
-        "days": [
-          "M",
-          "W"
-        ],
-        "startTime": "14:30",
-        "endTime": "16:00",
-        "building": "Tech Center"
-      }
-    ]
+    "professor": "Dr. Smith",
+    "rmp": 4.5,
+    "days": ["M", "W", "F"],
+    "startTime": "09:00",
+    "endTime": "09:50"
+  },
+  {
+    "id": "PHYS 101",
+    "section": "02",
+    "title": "General Physics",
+    "professor": "Dr. Jones",
+    "rmp": 4.0,
+    "days": ["T", "Th"],
+    "startTime": "10:30",
+    "endTime": "11:45"
   }
 ]
