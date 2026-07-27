@@ -18,6 +18,7 @@
 | **Variables & Functions** | `camelCase` | `solveSchedules`, `selectedCourseIds`, `timeToMinutes` |
 | **Constants / Datasets** | `UPPER_SNAKE_CASE` | `INITIAL_COURSES`, `DISTANCE_MATRIX`, `COLOR_STYLES` |
 | **DOM Element References** | `camelCase` matching element ID | `prevScheduleBtn`, `selectStartTime`, `courseChecklist` |
+| **Helper Script Files** | `snake_case` or descriptive names | `schedule_optimizer.js`, `exporter.js`, `resolver.js` |
 | **CSS Classes (Tailwind)** | Utility-first lowercase | `bg-slate-900 border-slate-800 text-indigo-400` |
 
 ---
