@@ -7,7 +7,9 @@ CourseFlow is an interactive full-stack web application designed to help univers
 ## 🚀 Features
 
 - **Interactive Course Management:** Easily add or remove courses, sections, times, locations, and professor info.
-- **Automated Schedule Solver:** Instantly generates valid, non-overlapping schedule combinations.
+- **Automated Schedule Solver:** Instantly generates valid, non-overlapping schedule combinations with an upgraded optimizer helper module in `schedule_optimizer.js`.
+- **Calendar Export:** Export generated schedules as `.ics` files using the new `exporter.js` helper.
+- **Interface Cleanup & Theme Fixes:** Bottom panel controls reduce side clutter and `resolver.js` improves theme toggling and conflict behavior.
 - **Backend Persistence:** Automatically fetches and saves course data to `courses.json` using an Express REST API.
 - **Responsive UI:** Modern, clean user interface built with Tailwind CSS and Lucide icons.
 
@@ -76,6 +78,9 @@ courseflow/
 ├── server.js          # Express.js backend server API
 ├── courses.json       # Backend database / JSON storage
 ├── index.html         # Main frontend application interface
+├── schedule_optimizer.js # Schedule optimization helper module
+├── exporter.js        # Schedule calendar export helper
+├── resolver.js        # Theme and conflict resolution helper
 ├── package.json       # Node project configuration & dependencies
 └── README.md          # Project documentation
 ```

@@ -53,7 +53,19 @@ Complementing CourseFlow, **OmniCalc Pro** provides a full-fledged scientific, p
   2. Total campus walking time penalty across all weekly transitions.
 - Allow dynamic weight adjustments via UI sliders with instant re-ranking of valid options.
 
-### FR-5: Visual Timetable & Metrics Dashboard
+### FR-5: Export & File Generation
+- Provide a client-side calendar export path that generates `.ics` files for the user's selected schedule.
+- Support download of export artifacts without requiring server-side storage.
+
+### FR-6: Conflict Resolution & Interface Stability
+- Include a helper module to surface schedule conflict details and ensure theme toggles work correctly in both light and dark modes.
+- Fix the interface so light mode toggling remains stable and accessible.
+
+### FR-7: UI Layout Cleanup
+- Reduce sidebar density by moving schedule action controls and dropdowns into a bottom panel.
+- Ensure the main calendar view remains the visual priority while user actions remain easily accessible.
+
+### FR-8: Visual Timetable & Metrics Dashboard
 - 5-Day (Mon–Fri) visual calendar grid with time slots from 08:00 AM to 06:00 PM.
 - Color-coded section cards positioned dynamically based on exact class duration.
 - Summary dashboard metrics: Overall Match Score, Total Transit Minutes, Average Professor Score, Total Credit Hours.
