@@ -5,34 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CourseFlow | Smart Class & Schedule Optimizer</title>
     <!-- Tailwind CSS CDN -->
-    <script src="js/tailwind.min.js"></script>
+    <script src="public/js/tailwind.min.js"></script>
     <!-- Tailwind Configuration for Custom Palette & Fonts -->
-     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="public/styles.css">
     <script>
         tailwind.config = {
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                serif: ['Playfair Display', 'serif'],
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manrope', 'Inter', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'Playfair Display', 'serif'],
+                    }
+                }
             }
         }
-    }
-}
     </script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <script src="/js/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="public/js/lucide.min.js"></script>
     <style>
         body {
-    font-family: 'Inter', sans-serif;
-}
+            font-family: 'Manrope', 'Inter', sans-serif;
+        }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
-}
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+            letter-spacing: 0.01em;
+        }
+
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
@@ -53,7 +55,7 @@ h1, h2, h3, h4, h5, h6 {
 <body class="h-full bg-slate-900 dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex flex-col transition-colors duration-200">
 
     <!-- Top Navigation Bar -->
-    <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
+    <header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/85 dark:bg-slate-950/85 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
         <div class="flex items-center gap-3">
             <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/25">
                 <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
@@ -68,7 +70,7 @@ h1, h2, h3, h4, h5, h6 {
         </div>
 
         <div class="flex items-center gap-3">
-            <div class="hidden md:flex items-center gap-4 text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-lg">
+            <div class="hidden md:flex items-center gap-4 text-[11px] text-slate-600 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 px-3 py-1.5 rounded-full">
                 <span class="flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-500"></i> <strong class="text-slate-900 dark:text-slate-200" id="statCourseCount">6</strong> Courses</span>
                 <span class="h-3 w-px bg-slate-300 dark:bg-slate-800"></span>
                 <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5 text-cyan-500"></i> <strong class="text-slate-900 dark:text-slate-200" id="statSectionCount">18</strong> Sections</span>
@@ -95,8 +97,8 @@ h1, h2, h3, h4, h5, h6 {
     <div class="flex-1 flex overflow-hidden">
         
         <!-- Left Sidebar: Controls & Constraints -->
-        <aside class="w-80 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col shrink-0 custom-scrollbar overflow-y-auto">
-            <div class="p-5 border-b border-slate-200 dark:border-slate-800">
+        <aside class="w-80 border-r border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 flex flex-col shrink-0 custom-scrollbar overflow-y-auto">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800">
                 <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-200 flex items-center justify-between">
                     <span>1. Required Courses</span>
                     <span class="text-[11px] font-normal text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full" id="selectedCoursesBadge">5 Selected</span>
@@ -212,7 +214,7 @@ h1, h2, h3, h4, h5, h6 {
             </div>
 
             <!-- Solve Trigger Button -->
-            <div class="p-5 mt-auto bg-slate-100 dark:bg-slate-950">
+            <div class="p-4 mt-auto bg-slate-100/80 dark:bg-slate-950/80">
                 <button id="solveBtn" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition active:scale-[0.98]">
                     <i data-lucide="zap" class="w-4 h-4 fill-white"></i>
                     <span>Generate Optimal Schedules</span>
@@ -224,7 +226,7 @@ h1, h2, h3, h4, h5, h6 {
         <main class="flex-1 bg-white dark:bg-slate-900 flex flex-col custom-scrollbar overflow-y-auto">
             
             <!-- Toolbar & Schedule Navigator -->
-            <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 backdrop-blur flex flex-wrap items-center justify-between gap-4 sticky top-0 z-20">
+            <div class="p-3.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 backdrop-blur flex flex-wrap items-center justify-between gap-3 sticky top-0 z-20">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-1 shadow-sm">
                         <button id="prevScheduleBtn" class="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition">
@@ -258,8 +260,8 @@ h1, h2, h3, h4, h5, h6 {
             </div>
 
             <!-- Schedule Metrics Dashboard -->
-            <div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="metricsContainer">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="metricsContainer">
                     
                     <!-- Metric 1: Match Score -->
                     <div class="p-3.5 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center gap-3 shadow-sm">
@@ -318,8 +320,8 @@ h1, h2, h3, h4, h5, h6 {
             </div>
 
             <!-- Calendar View Container -->
-            <div class="p-5 flex-1 flex flex-col min-h-[640px]">
-                <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/80 rounded-2xl p-4 shadow-xl flex-1 flex flex-col overflow-x-auto min-w-[700px]">
+            <div class="p-4 flex-1 flex flex-col min-h-[640px]">
+                <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/80 rounded-2xl p-4 shadow-[0_15px_45px_-25px_rgba(15,23,42,0.4)] flex-1 flex flex-col overflow-x-auto min-w-[700px]">
                     
                     <!-- Days Header -->
                     <div class="grid grid-cols-[60px_repeat(5,1fr)] text-center text-xs font-semibold text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 pb-3 mb-2">
@@ -381,7 +383,7 @@ h1, h2, h3, h4, h5, h6 {
                 </div>
 
                 <!-- Section List & Transit Details -->
-                <div class="mt-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-2xl p-5 shadow-sm">
+                <div class="mt-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-2xl p-4 shadow-sm">
                     <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-200 mb-3 flex items-center justify-between">
                         <span>Selected Sections Breakdown</span>
                         <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">Schedule Option Details</span>
@@ -539,6 +541,37 @@ h1, h2, h3, h4, h5, h6 {
             if (b1 === b2) return 0;
             if (DISTANCE_MATRIX[b1] && DISTANCE_MATRIX[b1][b2]) return DISTANCE_MATRIX[b1][b2];
             return 10;
+        }
+
+        let selectedDaysInModal = [];
+
+        function syncDayPickerButtons() {
+            document.querySelectorAll('#dayPickerContainer .day-btn').forEach(btn => {
+                const day = btn.getAttribute('data-day');
+                const isActive = selectedDaysInModal.includes(day);
+
+                btn.classList.toggle('active', isActive);
+                btn.classList.toggle('bg-indigo-600', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('border-indigo-600', isActive);
+                btn.classList.toggle('shadow-sm', isActive);
+                btn.classList.toggle('shadow-indigo-600/20', isActive);
+                btn.classList.toggle('bg-slate-50', !isActive);
+                btn.classList.toggle('dark:bg-slate-950', !isActive);
+                btn.classList.toggle('text-slate-700', !isActive);
+                btn.classList.toggle('dark:text-slate-300', !isActive);
+                btn.classList.toggle('border-slate-200', !isActive);
+                btn.classList.toggle('dark:border-slate-800', !isActive);
+            });
+        }
+
+        function toggleDaySelection(day) {
+            if (selectedDaysInModal.includes(day)) {
+                selectedDaysInModal = selectedDaysInModal.filter(selectedDay => selectedDay !== day);
+            } else {
+                selectedDaysInModal.push(day);
+            }
+            syncDayPickerButtons();
         }
 
         // ------------------------------------------------------------------
@@ -1156,26 +1189,22 @@ h1, h2, h3, h4, h5, h6 {
         const duplicateAlertText = document.getElementById('duplicateAlertText');
 
         document.getElementById('addCourseBtn').addEventListener('click', () => {
-    duplicateAlert.classList.add('hidden');
-    
-    // Reset all day buttons back to unselected
-    document.querySelectorAll('#dayPickerContainer .day-btn').forEach(btn => {
-        btn.classList.remove('active', 'bg-indigo-600', 'text-white', 'border-indigo-600');
-        btn.classList.add('bg-slate-50', 'dark:bg-slate-950', 'text-slate-700', 'dark:text-slate-300');
-    });
+            duplicateAlert.classList.add('hidden');
+            selectedDaysInModal = [];
+            syncDayPickerButtons();
+            modal.classList.remove('hidden');
+        });
 
-    modal.classList.remove('hidden');
-});
-        // Toggle active state on day picker buttons
         document.querySelectorAll('#dayPickerContainer .day-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                btn.classList.toggle('active');
-                btn.classList.toggle('bg-indigo-600');
-                btn.classList.toggle('text-white');
-                btn.classList.toggle('border-indigo-600');
+                toggleDaySelection(btn.getAttribute('data-day'));
             });
         });
-        document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            selectedDaysInModal = [];
+            syncDayPickerButtons();
+            modal.classList.add('hidden');
+        });
 
         document.getElementById('addCourseForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1186,13 +1215,12 @@ h1, h2, h3, h4, h5, h6 {
             const title = document.getElementById('newCourseTitle').value.trim();
             const prof = document.getElementById('newProf').value.trim();
             const rmp = parseFloat(document.getElementById('newRmp').value);
-            const selectedDayBtns = document.querySelectorAll('#dayPickerContainer .day-btn.active');
-            if (selectedDayBtns.length === 0) {
+            if (selectedDaysInModal.length === 0) {
                 duplicateAlertText.textContent = "Please select at least one day for the section.";
                 duplicateAlert.classList.remove('hidden');
                 return;
             }
-            const days = Array.from(selectedDayBtns).map(btn => btn.getAttribute('data-day'));
+            const days = [...selectedDaysInModal];
             const building = document.getElementById('newBuilding').value;
             const start = document.getElementById('newStart').value;
             const end = document.getElementById('newEnd').value;
@@ -1243,6 +1271,8 @@ h1, h2, h3, h4, h5, h6 {
                 building: building
             });
 
+            selectedDaysInModal = [];
+            syncDayPickerButtons();
             modal.classList.add('hidden');
             solveSchedules();
 
