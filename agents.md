@@ -45,6 +45,7 @@ CLIProxyAPI/
 - **Lucide Icons**: Used via CDN script (`https://unpkg.com/lucide@latest`). Always call `lucide.createIcons();` after dynamically modifying DOM elements containing `data-lucide` attributes.
 - **Vanilla JavaScript (ES6+)**: Zero framework overhead. Use clean state-driven UI rendering functions (`renderUI()`, `solveSchedules()`).
 - **Web Audio API**: Used in `calculator/script.js` for synthesizing UI sound FX without external audio assets.
+- **Helper Modules**: Treat new helper scripts such as `schedule_optimizer.js`, `exporter.js`, and `resolver.js` as first-class logic layers for optimization, export generation, and interface/theme resolution.
 
 ---
 

@@ -69,6 +69,11 @@ $$S_{\text{prof}} = \left( \frac{\overline{\text{RMP}} - 1}{4} \right) \times 10
 $$S_{\text{walk}} = \max\left(0, 100 - (\text{TotalWalkMinutes} \times 1.5)\right)$$
 $$S_{\text{match}} = \frac{w_{\text{prof}} \cdot S_{\text{prof}} + w_{\text{walk}} \cdot S_{\text{walk}}}{w_{\text{prof}} + w_{\text{walk}}}$$
 
+### 3.4 Helper Module Layer
+- `schedule_optimizer.js` encapsulates enhanced schedule scoring, conflict detection, and optimization ranking logic for the v2 engine.
+- `exporter.js` generates calendar export artifacts in ICS format and provides client-side download helpers.
+- `resolver.js` supports interface theming and schedule conflict resolution utilities, including light-mode toggling fixes.
+
 ---
 
 ## 4. Render & Layout Pipeline
