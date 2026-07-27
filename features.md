@@ -36,7 +36,19 @@
 - Sort selector dropdown: *Highest Match Score*, *Top Rated Professors*, *Least Walking Distance*.
 - Export schedule data to JSON file and Save/Favorite button.
 
-### F-1.7: Custom Course Creation Modal
+### F-1.7: Schedule Optimizer V2
+- New optimizer helper module supports conflict scoring, rating/walking-time weighting, and schedule issue diagnostics.
+- Improves score transparency by surfacing conflict pairs and optimization tradeoffs.
+
+### F-1.8: Calendar Export
+- Export schedules as `.ics` files for import into Google Calendar, Outlook, or Apple Calendar.
+- Client-side ICS generation avoids backend persistence and keeps export portable.
+
+### F-1.9: UI Layout Cleanup
+- Bottom panel controls reduce sidebar clutter and preserve the main weekly calendar as the visual focus.
+- Dropdowns and export actions are reorganized into a cleaner bottom action strip.
+
+### F-1.10: Custom Course Creation Modal
 - Modal dialog allowing students to add new custom courses and sections on the fly (Course Code, Title, Professor, RMP rating, Days, Building, Start/End times).
 
 ---

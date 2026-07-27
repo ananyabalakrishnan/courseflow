@@ -10,7 +10,11 @@
         "section": "01",
         "professor": "Dr. Smith",
         "rmp": 4.5,
-        "days": ["M", "W", "F"],
+        "days": [
+          "M",
+          "W",
+          "F"
+        ],
         "startTime": "09:00",
         "endTime": "09:50"
       }
@@ -26,10 +30,24 @@
         "id": "PHYS101-01",
         "section": "01",
         "professor": "Dr. Jones",
-        "rmp": 4.0,
-        "days": ["T", "Th"],
+        "rmp": 4,
+        "days": [
+          "T",
+          "Th"
+        ],
         "startTime": "10:30",
         "endTime": "11:45"
+      },
+      {
+        "id": "PHYS 101-02",
+        "professor": "asjkdl",
+        "rmp": 4.5,
+        "days": [
+          "Th"
+        ],
+        "startTime": "14:00",
+        "endTime": "15:15",
+        "building": "Science Hall"
       }
     ]
   }
